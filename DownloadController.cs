@@ -6,10 +6,10 @@ using PuppeteerSharp;
 
 namespace DuolingoAPI 
 {
-    public static class DownloadController 
+    public static class ChromiumDownloadController 
     {
         private static BrowserFetcher fetcher;
-        public static async Task CheckIfDownloadNeeded() {
+        public static async Task CheckDownload() {
             fetcher = new BrowserFetcher();
 
             IEnumerable<string> localRevisions = fetcher.LocalRevisions();
@@ -29,7 +29,7 @@ namespace DuolingoAPI
             }
         }
             
-        public static async Task DownloadDefaultAsync() {
+        private static async Task DownloadDefaultAsync() {
             Console.WriteLine($"Downloading Chromium/{BrowserFetcher.DefaultChromiumRevision}:");
 
 
@@ -37,7 +37,7 @@ namespace DuolingoAPI
 
             await fetcher.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
         }
-        static void DisplayDownloadProgress(object sender, DownloadProgressChangedEventArgs e) {
+        private static void DisplayDownloadProgress(object sender, DownloadProgressChangedEventArgs e) {
             // Console.WriteLine(e);
 
             Console.Write("\rDownloaded {0}MB(s) of {1}MBs. {2}% complete...",
