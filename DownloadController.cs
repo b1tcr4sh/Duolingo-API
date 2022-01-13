@@ -4,7 +4,7 @@ using System.Net;
 using System.Collections.Generic;
 using PuppeteerSharp;
 
-namespace DuolingoAPI 
+namespace DuolingoAPI.Chromium
 {
     public static class ChromiumDownloadController 
     {
