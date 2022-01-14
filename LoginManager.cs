@@ -34,7 +34,7 @@ namespace DuolingoAPI.Login
 
             return credentials;
         }
-        public async Task LoginToDuolingo(Page page) {
+        public async Task LoginAsync(Page page) {
             page.Popup += new EventHandler<PopupEventArgs>(FallBackWithGoogleLogin); 
 
 
