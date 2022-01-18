@@ -11,17 +11,21 @@ namespace DuolingoAPI.Login
     public class LoginManager
     {
         public LoginCredentials Credentials { get; private set; }
+        private Func<Page, Task> HandleIncorrectLogin;
 
-        public LoginManager(string username, string password) {
+        public LoginManager(Func<Page, Task> HandleIncorrectLoginMethod, string username, string password) {
             Credentials = new LoginCredentials {
                 Username = username,
                 Password = password
             };
+            HandleIncorrectLogin = HandleIncorrectLoginMethod;
         }
-        public LoginManager() {}
+        public LoginManager(Func<Page, Task> HandleIncorrectLoginMethod) {
+            HandleIncorrectLogin = HandleIncorrectLoginMethod;
+        }
 
 
-        public LoginCredentials CollectCredentials(string serviceName)
+        public static LoginCredentials CollectCredentials(string serviceName)
         {
             LoginCredentials credentials = new LoginCredentials();  
 
@@ -65,15 +69,28 @@ namespace DuolingoAPI.Login
             await page.TypeAsync("[data-test=\"password-input\"]", Credentials.Password);
 
             await page.ClickAsync("button._1rl91._3HhhB._2NolF._275sd._1ZefG._2oW4v");
+
+            Thread.Sleep(TimeSpan.FromSeconds(5));
             // Attempt at checking for incorrect passwords
             if (await page.QuerySelectorAsync("[data-test=\"invalid-form-field\"]") != null) {
-                await HandleIncorrectLogin();
+                await HandleIncorrectLogin(page);
             }            
         }
         private async void FallBackWithGoogleLogin(object sender, PopupEventArgs e)
         {
             Console.WriteLine("\"Continue With Google\" Popup appeared.  It appears the account was created with Google.");
             // LoginManager passwordManager = new LoginManager();
+
+            Console.Write("Is your Google login the same as Duolingo?  If not, you'll have to re-enter crendentials. (y/N) > ");
+            ConsoleKeyInfo response = Console.ReadKey();
+            Console.WriteLine();
+
+            if (response.Key == ConsoleKey.N) {
+                Credentials = CollectCredentials("Google");
+            } else {
+                Console.WriteLine("Continuing with previously entered credentials...");
+            }
+
 
             Page googlePopup = e.PopupPage;
             await googlePopup.WaitForSelectorAsync("input.whsOnd.zHQkBf");
@@ -89,10 +106,6 @@ namespace DuolingoAPI.Login
             await googlePopup.WaitForSelectorAsync("[type=\"password\"]");
             await googlePopup.TypeAsync("[type=\"password\"]", Credentials.Password);
             await googlePopup.ClickAsync("button.VfPpkd-LgbsSe.VfPpkd-LgbsSe-OWXEXe-k8QpJ.VfPpkd-LgbsSe-OWXEXe-dgl2Hf.nCP5yc.AjY5Oe.DuMIQc.qIypjc.TrZEUc.lw1w4b");
-        }
-
-        public virtual async Task HandleIncorrectLogin() {
-            Console.WriteLine("Incorrect Login Information Entered");
         }
     }
 }

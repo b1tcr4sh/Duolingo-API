@@ -12,9 +12,10 @@ namespace DuolingoAPI {
         public Client(ClientOptions options) {
            Options = options; 
         }
+        public Client() {}
 
-        public async Task LoginToDuolingo(Credentials loginCredentials) {
-            LoginManager loginManager = new LoginManager(loginCredentials.Username, loginCredentials.Password);
+        public async Task LoginToDuolingo(LoginCredentials loginCredentials) {
+            LoginManager loginManager = new LoginManager(HandleIncorrectLogin, loginCredentials.Username, loginCredentials.Password);
 
             browser = await Puppeteer.LaunchAsync(new LaunchOptions {
                 Headless = Options.BrowserHeadless,
@@ -24,11 +25,21 @@ namespace DuolingoAPI {
             Page page = await browser.NewPageAsync();
             await page.GoToAsync("https://www.duolingo.com/?isLoggingIn=true", new NavigationOptions {Timeout = 0});
 
+            await page.WaitForSelectorAsync("[data-test=have-account]");
+            await page.ClickAsync("div._3uMJF");
+
             await loginManager.LoginAsync(page);
 
             while (await page.QuerySelectorAsync("button._3HhhB._2NolF._275sd._1ZefG._2Dar-._2zhZF") != null) {
-                await page.ClickAsync("button._3HhhB._2NolF._275sd._1ZefG._2Dar-._2zhZF");
+                if (await page.QuerySelectorAsync("button._3HhhB._2NolF._275sd._1ZefG._2Dar-._2zhZF") != null)
+                    await page.ClickAsync("button._3HhhB._2NolF._275sd._1ZefG._2Dar-._2zhZF");
             }
-        } 
+        }
+        private async Task HandleIncorrectLogin(Page page) {
+            Console.WriteLine("Incorrect Login Credentials Detected, please re-enter your credentials:");
+
+            LoginCredentials newCredentials = LoginManager.CollectCredentials("Duolingo");
+            await LoginToDuolingo(newCredentials);
+        }  
     }
 }

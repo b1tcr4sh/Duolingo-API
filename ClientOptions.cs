@@ -2,7 +2,7 @@ using System;
 
 namespace DuolingoAPI {
     public struct ClientOptions {
-        public bool BrowserHeadless;
+        public bool BrowserHeadless = false;
         public int BrowserTimeout = 0;
 
     }
