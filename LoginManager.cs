@@ -8,7 +8,7 @@ using PuppeteerSharp;
 
 namespace DuolingoAPI.Login
 {
-    class LoginManager
+    public class LoginManager
     {
         public LoginCredentials Credentials { get; private set; }
 
@@ -29,7 +29,24 @@ namespace DuolingoAPI.Login
             credentials.Username = Console.ReadLine();
 
             Console.Write($"{serviceName} Password > ");
-            credentials.Password = Console.ReadLine();
+            // Collect Password without showing text
+            StringBuilder input = new StringBuilder();
+            while (true)
+            {
+                ConsoleKeyInfo key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Enter) break;
+                if (key.Key == ConsoleKey.Backspace && input.Length > 0) {
+                    input.Remove(input.Length - 1, 1);
+                    Console.Write($"\r{serviceName} Password > ");
+                    for (int i = 0; i < input.Length; i++) Console.Write("*");
+                }
+                else if (key.Key != ConsoleKey.Backspace) {
+                    input.Append(key.KeyChar);
+                    Console.Write("*");
+                }
+            }
+            Console.WriteLine();
+            credentials.Password = input.ToString(); // Console.ReadLine();
 
 
             return credentials;
