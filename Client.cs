@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 using PuppeteerSharp;
 using DuolingoAPI.Login;
 
+// TODO:
+// Get Duolingo Assignments, Get all-time XP, Get currency (Lingots, Crowns), Get streak, Get lesson information by name.
+
 namespace DuolingoAPI {
     public class Client {
         public ClientOptions Options;
