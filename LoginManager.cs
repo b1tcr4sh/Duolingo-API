@@ -25,14 +25,14 @@ namespace DuolingoAPI.Login
         }
 
 
-        public static LoginCredentials CollectCredentials(string serviceName)
+        public static LoginCredentials CollectCredentials(Services serviceName)
         {
             LoginCredentials credentials = new LoginCredentials();  
 
-            Console.Write($"{serviceName} Username > ");
+            Console.Write($"{serviceName.ToString()} Username > ");
             credentials.Username = Console.ReadLine();
 
-            Console.Write($"{serviceName} Password > ");
+            Console.Write($"{serviceName.ToString()} Password > ");
             // Collect Password without showing text
             StringBuilder input = new StringBuilder();
             while (true)
@@ -51,7 +51,7 @@ namespace DuolingoAPI.Login
             }
             Console.WriteLine();
             credentials.Password = input.ToString(); // Console.ReadLine();
-
+            credentials.Service = serviceName;
 
             return credentials;
         }
@@ -86,7 +86,7 @@ namespace DuolingoAPI.Login
             Console.WriteLine();
 
             if (response.Key == ConsoleKey.N) {
-                Credentials = CollectCredentials("Google");
+                Credentials = CollectCredentials(Services.Google);
             } else {
                 Console.WriteLine("Continuing with previously entered credentials...");
             }

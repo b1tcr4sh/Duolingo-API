@@ -38,7 +38,7 @@ namespace DuolingoAPI {
         private async Task HandleIncorrectLogin(Page page) {
             Console.WriteLine("Incorrect Login Credentials Detected, please re-enter your credentials:");
 
-            LoginCredentials newCredentials = LoginManager.CollectCredentials("Duolingo");
+            LoginCredentials newCredentials = LoginManager.CollectCredentials(Services.Duolingo);
             await LoginToDuolingo(newCredentials);
         }  
     }
