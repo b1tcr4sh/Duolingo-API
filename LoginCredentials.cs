@@ -1,6 +1,11 @@
+using PuppeteerSharp;
+
 namespace DuolingoAPI.Login {
-    public struct LoginCredentials {
-        public string Username { get; set; }
-        public string Password { get; set; } 
+    public struct LoginCredentials : Credentials {
+        public Services Service { get; set; }
+    }
+
+    public enum Services {
+        Google, Duolingo
     }
 }
