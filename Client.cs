@@ -38,7 +38,7 @@ namespace DuolingoAPI {
                     await page.ClickAsync("button._3HhhB._2NolF._275sd._1ZefG._2Dar-._2zhZF");
             }
         }
-        private async Task HandleIncorrectLogin(Page page) {
+        public virtual async Task HandleIncorrectLogin(Page page) {
             Console.WriteLine("Incorrect Login Credentials Detected, please re-enter your credentials:");
 
             LoginCredentials newCredentials = LoginManager.CollectCredentials(Services.Duolingo);

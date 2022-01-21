@@ -78,6 +78,10 @@ namespace DuolingoAPI.Login
         }
         private async void FallBackWithGoogleLogin(object sender, PopupEventArgs e)
         {
+            // TODO: Make collecting Google credentials independent from terminal.  It should get them elsewhere to ensure this doesn't have to be used in terminal.
+
+
+
             Console.WriteLine("\"Continue With Google\" Popup appeared.  It appears the account was created with Google.");
             // LoginManager passwordManager = new LoginManager();
 
