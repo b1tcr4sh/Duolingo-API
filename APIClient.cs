@@ -7,15 +7,15 @@ using DuolingoAPI.Login;
 // Get Duolingo Assignments, Get all-time XP, Get currency (Lingots, Crowns), Get streak, Get lesson information by name.
 
 namespace DuolingoAPI {
-    public class Client {
+    public class APIClient {
         public ClientOptions Options;
 
         private Browser browser;
 
-        public Client(ClientOptions options) {
+        public APIClient(ClientOptions options) {
            Options = options; 
         }
-        public Client() {}
+        public APIClient() {}
 
         public async Task LoginToDuolingo(LoginCredentials loginCredentials) {
             LoginManager loginManager = new LoginManager(HandleIncorrectLogin, loginCredentials.Username, loginCredentials.Password);
