@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using PuppeteerSharp;
+using Microsoft.Playwright;
 using DuolingoAPI.Login;
 
 // TODO:
@@ -10,7 +10,7 @@ namespace DuolingoAPI {
     public class APIClient {
         public ClientOptions Options;
 
-        private Browser browser;
+        private IBrowser browser;
 
         public APIClient(ClientOptions options) {
            Options = options; 
@@ -25,7 +25,7 @@ namespace DuolingoAPI {
                 Timeout = Options.BrowserTimeout               
             });
             
-            Page page = await browser.NewPageAsync();
+            IPage page = await browser.NewPageAsync();
             await page.GoToAsync("https://www.duolingo.com/?isLoggingIn=true", new NavigationOptions {Timeout = 0});
 
             await page.WaitForSelectorAsync("[data-test=have-account]");

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/ethan/Dev/DuolingoAPI/DuolingoAPI/DuolingoAPI.csproj": {}
+    "C:\\Users\\ryanf\\Dev\\duolingo-api\\DuolingoAPI.csproj": {}
   },
   "projects": {
-    "/home/ethan/Dev/DuolingoAPI/DuolingoAPI/DuolingoAPI.csproj": {
+    "C:\\Users\\ryanf\\Dev\\duolingo-api\\DuolingoAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/ethan/Dev/DuolingoAPI/DuolingoAPI/DuolingoAPI.csproj",
+        "projectUniqueName": "C:\\Users\\ryanf\\Dev\\duolingo-api\\DuolingoAPI.csproj",
         "projectName": "DuolingoAPI",
-        "projectPath": "/home/ethan/Dev/DuolingoAPI/DuolingoAPI/DuolingoAPI.csproj",
-        "packagesPath": "/home/ethan/.nuget/packages/",
-        "outputPath": "/home/ethan/Dev/DuolingoAPI/DuolingoAPI/obj/",
+        "projectPath": "C:\\Users\\ryanf\\Dev\\duolingo-api\\DuolingoAPI.csproj",
+        "packagesPath": "C:\\Users\\ryanf\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ryanf\\Dev\\duolingo-api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/ethan/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ryanf\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
@@ -38,9 +38,9 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
-            "PuppeteerSharp": {
+            "microsoft.playwright": {
               "target": "Package",
-              "version": "[6.1.0, )"
+              "version": "[1.20.2, )"
             }
           },
           "imports": [
@@ -58,7 +58,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/6.0.101/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }
