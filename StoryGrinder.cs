@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
-using PuppeteerSharp;
+using Microsoft.Playwright;
 using DuolingoAPI;
 
 namespace DuolingoAPI {
     class StoryGrinder {
-        public StoryGrinder(Browser browser) {
+        public StoryGrinder(IBrowser browser) {
 
         }
 
 
-        async Task StoryGrind(Page storiesPage, Page pageToClose, IEnumerable<String> storyList)
+        async Task StoryGrind(IPage storiesPage, IPage pageToClose, IEnumerable<String> storyList)
         {
             // await pageToClose.CloseAsync();
             // Navigate to stories page and begin story grinding
@@ -23,13 +23,13 @@ namespace DuolingoAPI {
 
                 string processedURL = ProcessURL(url);
 
-                await storiesPage.GoToAsync(processedURL, new NavigationOptions {Timeout = 0});
+                await storiesPage.GotoAsync(processedURL, new PageGotoOptions {Timeout = 0});
 
-                ElementHandle title = await storiesPage.WaitForSelectorAsync("div.saQLX", new WaitForSelectorOptions {Timeout = 0});
-                JSHandle titleText = await title.GetPropertyAsync("textContent");   
-                Console.WriteLine("\nBeginning grinding on \"{0}\"", await titleText.JsonValueAsync());
+                IElementHandle title = await storiesPage.WaitForSelectorAsync("div.saQLX", new PageWaitForSelectorOptions { Timeout = 0 });
+                IJSHandle titleText = await title.GetPropertyAsync("textContent");   
+                Console.WriteLine("\nBeginning grinding on \"{0}\"", await titleText.JsonValueAsync<IJSHandle>());
 
-                ElementHandle startButton = await storiesPage.WaitForSelectorAsync("[data-test=\"story-start\"]");
+                IElementHandle startButton = await storiesPage.WaitForSelectorAsync("[data-test=\"story-start\"]");
                 await startButton.ClickAsync();
 
 
@@ -39,38 +39,40 @@ namespace DuolingoAPI {
             }
             Console.ReadKey();
         }
-        async Task CompleteStory(Page storiesPage) {
-            ElementHandle button = await storiesPage.WaitForSelectorAsync("[data-test=\"stories-player-continue\"]");
+        async Task CompleteStory(IPage storiesPage) {
+            IElementHandle button = await storiesPage.WaitForSelectorAsync("[data-test=\"stories-player-continue\"]");
             int attempts = 0;
 
             while (storiesPage.QuerySelectorAsync("[data-test=\"stories-player-continue\"]") != null) {
-                ElementHandle continueButton = await storiesPage.WaitForSelectorAsync("[data-test=\"stories-player-continue\"]");
+                IElementHandle continueButton = await storiesPage.WaitForSelectorAsync("[data-test=\"stories-player-continue\"]");
                 await continueButton.ClickAsync();
 
-                if (await storiesPage.QuerySelectorAsync("[data-test=\"stories-choice\"]") != null) {
-                    ElementHandle[] choices = await storiesPage.QuerySelectorAllAsync("[data-test=\"stories-choice\"]");
+                IReadOnlyList<IElementHandle> choices = new List<IElementHandle>();
 
-                    foreach (ElementHandle element in choices) {
+                if (await storiesPage.QuerySelectorAsync("[data-test=\"stories-choice\"]") != null) {
+                    choices = await storiesPage.QuerySelectorAllAsync("[data-test=\"stories-choice\"]");
+
+                    foreach (IElementHandle element in choices) {
                         await element.ClickAsync();
                     } 
                 } else if (await storiesPage.QuerySelectorAsync("[data-test=\"challenge-tap-token\"]") != null) {
-                    ElementHandle[] choices = await storiesPage.QuerySelectorAllAsync("[data-test=\"challenge-tap-token\"]");
+                    choices = await storiesPage.QuerySelectorAllAsync("[data-test=\"challenge-tap-token\"]");
 
-                    foreach (ElementHandle element in choices) {
+                    foreach (IElementHandle element in choices) {
                         await element.ClickAsync();
                     } 
                 } else if (await storiesPage.QuerySelectorAsync("[data-test=\"stories-token\"]") != null) {
-                    ElementHandle[] tokens = await storiesPage.QuerySelectorAllAsync("[data-test=\"stories-token\"]");
+                    IReadOnlyList<IElementHandle> tokens = await storiesPage.QuerySelectorAllAsync("[data-test=\"stories-token\"]");
                     Random rng = new Random();
 
-                    ElementHandle[] disabledTokens = await storiesPage.QuerySelectorAllAsync("[disabled=\"\"");
+                    IReadOnlyList<IElementHandle> disabledTokens = await storiesPage.QuerySelectorAllAsync("[disabled=\"\"");
                     while (await storiesPage.QuerySelectorAsync("span._3Y29z._176_d._2jNpf") == null || await storiesPage.QuerySelectorAsync("h2._1qFda") != null) {
                         
-                        rng.Shuffle<ElementHandle>(tokens);
-                        foreach (ElementHandle element in tokens) {
+                        rng.Shuffle<IElementHandle>(tokens.ToList<IElementHandle>());
+                        foreach (IElementHandle element in tokens) {
                             disabledTokens = await storiesPage.QuerySelectorAllAsync("[disabled=\"\"");
-                            foreach (ElementHandle disabledToken in disabledTokens) {
-                                int index = Array.IndexOf(tokens, disabledToken);
+                            foreach (IElementHandle disabledToken in disabledTokens) {
+                                int index = Array.IndexOf(tokens.ToArray<IElementHandle>(), disabledToken);
                                 tokens.Where(val => val != disabledToken).ToArray();
                             }
                             await element.ClickAsync();
@@ -82,35 +84,35 @@ namespace DuolingoAPI {
                 }
             }            
         }
-        async Task ExitStory(Page page) {
+        async Task ExitStory(IPage page) {
             while (await page.QuerySelectorAsync("[data-test=\"stories-player-done\"]") == null) {
                 await page.ClickAsync("[data-test=\"stories-player-continue\"]");
             }
 
 
-            ElementHandle completeButton = await page.WaitForSelectorAsync("[data-test=\"stories-player-done\"]");
+            IElementHandle completeButton = await page.WaitForSelectorAsync("[data-test=\"stories-player-done\"]");
             await page.ClickAsync("[data-test=\"stories-player-done\"]");
 
             await page.WaitForSelectorAsync("div._3wEt9");
         }
-        async Task<IEnumerable<String>> GetStoryList(Browser browser) {
+        async Task<IEnumerable<String>> GetStoryList(IBrowser browser) {
             IEnumerable<String> storyUrls = new string[] {};
-            Page page = await browser.NewPageAsync();
-            await page.GoToAsync("https://www.duolingo.com/stories", new NavigationOptions {Timeout = 0});
+            IPage page = await browser.NewPageAsync();
+            await page.GotoAsync("https://www.duolingo.com/stories", new PageGotoOptions {Timeout = 0});
             Thread.Sleep(TimeSpan.FromSeconds(2));
 
-            ElementHandle[] storyIcons = await page.QuerySelectorAllAsync("div.X4jDx");
+            IReadOnlyList<IElementHandle> storyIcons = await page.QuerySelectorAllAsync("div.X4jDx");
 
 
-            foreach (ElementHandle element in storyIcons) {
+            foreach (IElementHandle element in storyIcons) {
                 await element.ClickAsync();
-                ElementHandle startButton = await page.QuerySelectorAsync("[data-test=\"story-start-button\"]");
+                IElementHandle startButton = await page.QuerySelectorAsync("[data-test=\"story-start-button\"]");
                 if (startButton != null) {
-                        JSHandle buttonHref = await startButton.GetPropertyAsync("href");
-                    object hrefJSON = await buttonHref.JsonValueAsync();
+                        IJSHandle buttonHref = await startButton.GetPropertyAsync("href");
+                    object hrefJSON = await buttonHref.JsonValueAsync<IJSHandle>();
 
                     storyUrls = storyUrls.Append<String>(hrefJSON.ToString());
-                    Console.WriteLine("Appended {0} to list of stories.", await buttonHref.JsonValueAsync());
+                    Console.WriteLine("Appended {0} to list of stories.", await buttonHref.JsonValueAsync<IJSHandle>());
                 } else {
                     Console.WriteLine("Skipped a story because it was locked.");
                 }
@@ -132,8 +134,8 @@ namespace DuolingoAPI {
     }
 
     static class ArrayShuffler {
-        public static void Shuffle<T> (this Random rng, T[] array) {
-            int n = array.Length;
+        public static void Shuffle<T> (this Random rng, List<T> array) {
+            int n = array.Count;
             while (n > 1) 
             {
                 int k = rng.Next(n--);

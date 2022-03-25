@@ -20,13 +20,20 @@ namespace DuolingoAPI {
         public async Task LoginToDuolingo(LoginCredentials loginCredentials) {
             LoginManager loginManager = new LoginManager(HandleIncorrectLogin, loginCredentials.Username, loginCredentials.Password);
 
-            browser = await Puppeteer.LaunchAsync(new LaunchOptions {
+            IPlaywright playwright = await Playwright.CreateAsync();
+            browser = await playwright.Firefox.LaunchAsync(new BrowserTypeLaunchOptions {
                 Headless = Options.BrowserHeadless,
-                Timeout = Options.BrowserTimeout               
+                Timeout = Options.BrowserTimeout
             });
+
+
+            // browser = await Puppeteer.LaunchAsync(new LaunchOptions {
+            //     Headless = Options.BrowserHeadless,
+            //     Timeout = Options.BrowserTimeout               
+            // });
             
             IPage page = await browser.NewPageAsync();
-            await page.GoToAsync("https://www.duolingo.com/?isLoggingIn=true", new NavigationOptions {Timeout = 0});
+            await page.GotoAsync("https://www.duolingo.com/?isLoggingIn=true");
 
             await page.WaitForSelectorAsync("[data-test=have-account]");
             await page.ClickAsync("div._3uMJF");
@@ -38,7 +45,7 @@ namespace DuolingoAPI {
                     await page.ClickAsync("button._3HhhB._2NolF._275sd._1ZefG._2Dar-._2zhZF");
             }
         }
-        public virtual async Task HandleIncorrectLogin(Page page) {
+        public virtual async Task HandleIncorrectLogin(IPage page) {
             Console.WriteLine("Incorrect Login Credentials Detected, please re-enter your credentials:");
 
             LoginCredentials newCredentials = LoginManager.CollectCredentials(Services.Duolingo);

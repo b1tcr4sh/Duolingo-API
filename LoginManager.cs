@@ -4,23 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
-using PuppeteerSharp;
+using Microsoft.Playwright;
 
 namespace DuolingoAPI.Login
 {
     public class LoginManager
     {
         public LoginCredentials Credentials { get; private set; }
-        private Func<Page, Task> HandleIncorrectLogin;
+        private Func<IPage, Task> HandleIncorrectLogin;
 
-        public LoginManager(Func<Page, Task> HandleIncorrectLoginMethod, string username, string password) {
+        public LoginManager(Func<IPage, Task> HandleIncorrectLoginMethod, string username, string password) {
             Credentials = new LoginCredentials {
                 Username = username,
                 Password = password
             };
             HandleIncorrectLogin = HandleIncorrectLoginMethod;
         }
-        public LoginManager(Func<Page, Task> HandleIncorrectLoginMethod) {
+        public LoginManager(Func<IPage, Task> HandleIncorrectLoginMethod) {
             HandleIncorrectLogin = HandleIncorrectLoginMethod;
         }
 
@@ -55,8 +55,8 @@ namespace DuolingoAPI.Login
 
             return credentials;
         }
-        public async Task LoginAsync(Page page) {
-            page.Popup += new EventHandler<PopupEventArgs>(FallBackWithGoogleLogin); 
+        public async Task LoginAsync(IPage page) {
+            // page.Popup += new EventHandler<PopupEventArgs>(FallBackWithGoogleLogin); 
 
 
             // LoginCredentials credentials = CollectCredentials("Duolingo");
@@ -76,40 +76,40 @@ namespace DuolingoAPI.Login
                 await HandleIncorrectLogin(page);
             }            
         }
-        private async void FallBackWithGoogleLogin(object sender, PopupEventArgs e)
-        {
-            // TODO: Make collecting Google credentials independent from terminal.  It should get them elsewhere to ensure this doesn't have to be used in terminal.
+        // private async void FallBackWithGoogleLogin(object sender, PopupEventArgs e)
+        // {
+        //     // TODO: Make collecting Google credentials independent from terminal.  It should get them elsewhere to ensure this doesn't have to be used in terminal.
 
 
 
-            Console.WriteLine("\"Continue With Google\" Popup appeared.  It appears the account was created with Google.");
-            // LoginManager passwordManager = new LoginManager();
+        //     Console.WriteLine("\"Continue With Google\" Popup appeared.  It appears the account was created with Google.");
+        //     // LoginManager passwordManager = new LoginManager();
 
-            Console.Write("Is your Google login the same as Duolingo?  If not, you'll have to re-enter crendentials. (y/N) > ");
-            ConsoleKeyInfo response = Console.ReadKey();
-            Console.WriteLine();
+        //     Console.Write("Is your Google login the same as Duolingo?  If not, you'll have to re-enter crendentials. (y/N) > ");
+        //     ConsoleKeyInfo response = Console.ReadKey();
+        //     Console.WriteLine();
 
-            if (response.Key == ConsoleKey.N) {
-                Credentials = CollectCredentials(Services.Google);
-            } else {
-                Console.WriteLine("Continuing with previously entered credentials...");
-            }
+        //     if (response.Key == ConsoleKey.N) {
+        //         Credentials = CollectCredentials(Services.Google);
+        //     } else {
+        //         Console.WriteLine("Continuing with previously entered credentials...");
+        //     }
 
 
-            Page googlePopup = e.PopupPage;
-            await googlePopup.WaitForSelectorAsync("input.whsOnd.zHQkBf");
+        //     IPage googlePopup = e.PopupPage;
+        //     await googlePopup.WaitForSelectorAsync("input.whsOnd.zHQkBf");
 
-            // LoginCredentials googleCredentials = passwordManager.CollectCredentials("Google");
+        //     // LoginCredentials googleCredentials = passwordManager.CollectCredentials("Google");
 
-            await googlePopup.TypeAsync("[type=\"email\"]", Credentials.Username);
-            await googlePopup.ClickAsync("button.VfPpkd-LgbsSe.VfPpkd-LgbsSe-OWXEXe-k8QpJ.VfPpkd-LgbsSe-OWXEXe-dgl2Hf.nCP5yc.AjY5Oe.DuMIQc.qIypjc.TrZEUc.lw1w4b");
+        //     await googlePopup.TypeAsync("[type=\"email\"]", Credentials.Username);
+        //     await googlePopup.ClickAsync("button.VfPpkd-LgbsSe.VfPpkd-LgbsSe-OWXEXe-k8QpJ.VfPpkd-LgbsSe-OWXEXe-dgl2Hf.nCP5yc.AjY5Oe.DuMIQc.qIypjc.TrZEUc.lw1w4b");
 
-            // TODO: Handle incorrect email/password
+        //     // TODO: Handle incorrect email/password
 
-            Thread.Sleep(4000);
-            await googlePopup.WaitForSelectorAsync("[type=\"password\"]");
-            await googlePopup.TypeAsync("[type=\"password\"]", Credentials.Password);
-            await googlePopup.ClickAsync("button.VfPpkd-LgbsSe.VfPpkd-LgbsSe-OWXEXe-k8QpJ.VfPpkd-LgbsSe-OWXEXe-dgl2Hf.nCP5yc.AjY5Oe.DuMIQc.qIypjc.TrZEUc.lw1w4b");
-        }
+        //     Thread.Sleep(4000);
+        //     await googlePopup.WaitForSelectorAsync("[type=\"password\"]");
+        //     await googlePopup.TypeAsync("[type=\"password\"]", Credentials.Password);
+        //     await googlePopup.ClickAsync("button.VfPpkd-LgbsSe.VfPpkd-LgbsSe-OWXEXe-k8QpJ.VfPpkd-LgbsSe-OWXEXe-dgl2Hf.nCP5yc.AjY5Oe.DuMIQc.qIypjc.TrZEUc.lw1w4b");
+        // }
     }
 }

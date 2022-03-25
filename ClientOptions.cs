@@ -1,8 +1,8 @@
 using System;
 
 namespace DuolingoAPI {
-    public struct ClientOptions {
-        public bool BrowserHeadless = false;
+    public class ClientOptions {
+        public bool BrowserHeadless = true;
         public int BrowserTimeout = 0;
 
     }
