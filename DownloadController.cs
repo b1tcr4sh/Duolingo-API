@@ -8,26 +8,11 @@ namespace DuolingoAPI.Chromium
 {
     public static class ChromiumDownloadController 
     {
-        // private static BrowserFetcher fetcher;
-        // public static async Task CheckDownload() {
-        //     fetcher = new BrowserFetcher();
-
-        //     IEnumerable<string> localRevisions = fetcher.LocalRevisions();
-
-        //     bool downloadNeeded = true;
-        //     foreach (string revision in localRevisions) {
-        //         if (revision == BrowserFetcher.DefaultChromiumRevision) {
-        //             Console.WriteLine($"Found Version Chromium/{revision}");
-        //             downloadNeeded = false;
-        //         }
-        //     }
-
-        //     if (downloadNeeded) {
-        //         await DownloadDefaultAsync();
-        //     } else {
-        //         Console.WriteLine("Default Chromium version is already installed...");
-        //     }
-        // }
+        public static void Download() {
+            Console.WriteLine("Installing firefox build...");
+            int exitCode = Microsoft.Playwright.Program.Main(new string[] { "install", "firefox" });
+            if (exitCode != 0) throw new Exception($"Browser install failed with code {exitCode}");
+        }
             
         // private static async Task DownloadDefaultAsync() {
         //     Console.WriteLine($"Downloading Chromium/{BrowserFetcher.DefaultChromiumRevision}:");
