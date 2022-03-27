@@ -13,13 +13,13 @@ namespace DuolingoAPI.Login
     public class LoginManager
     {
         public CredentialPair Credentials { get; private set; }
-        private Func<IPage, Task> HandleIncorrectLogin;
+        private Func<Task> HandleIncorrectLogin;
 
-        public LoginManager(Func<IPage, Task> HandleIncorrectLoginMethod, CredentialPair credentials) {
+        public LoginManager(Func<Task> HandleIncorrectLoginMethod, CredentialPair credentials) {
             Credentials = credentials;
             HandleIncorrectLogin = HandleIncorrectLoginMethod;
         }
-        public LoginManager(Func<IPage, Task> HandleIncorrectLoginMethod) {
+        public LoginManager(Func<Task> HandleIncorrectLoginMethod) {
             HandleIncorrectLogin = HandleIncorrectLoginMethod;
         }
 
@@ -93,7 +93,7 @@ namespace DuolingoAPI.Login
 
             // Attempt at checking for incorrect passwords
             if (await page.QuerySelectorAsync("[data-test=\"invalid-form-field\"]") != null) {
-                await HandleIncorrectLogin(page);
+                await HandleIncorrectLogin();
             }            
         }
         private async void FallBackWithGoogleLogin(object sender, IPage googlePopup)
