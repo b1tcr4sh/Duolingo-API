@@ -27,7 +27,7 @@ namespace DuolingoAPI {
             });
             
             IPage page = await browser.NewPageAsync();
-            await page.GotoAsync("https://www.duolingo.com/?isLoggingIn=true");
+            await page.GotoAsync("https://www.duolingo.com/?isLoggingIn=true", new PageGotoOptions { Timeout = 0 });
 
             await page.WaitForSelectorAsync("[data-test=have-account]");
             await page.ClickAsync("div._3uMJF");

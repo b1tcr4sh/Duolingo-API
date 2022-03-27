@@ -89,16 +89,24 @@ namespace DuolingoAPI.Login
 
             await page.ClickAsync("button._1rl91._3HhhB._2NolF._275sd._1ZefG._2oW4v");
 
-            Thread.Sleep(TimeSpan.FromSeconds(2));
+            Thread.Sleep(2);
 
-            IElementHandle googleButton = await page.QuerySelectorAsync("_3HhhB._2NolF._275sd._1ZefG._2Dar-");
+
+            // TODO 
+            // - Fix Button not being found and clicked
+            // - Fix waiting for google login to complete and homepage to load. 
+
+
+            ILocator googleButton = await page.WaitForSelectorAsync("button._3HhhB._2NolF._275sd._1ZefG._2Dar-", new PageWaitForSelectorOptions { Timeout = 0, State = WaitForSelectorState.Visible }) as ILocator;
+
+            // await page.WaitForLoadStateAsync(LoadState.Load, new PageWaitForLoadStateOptions { Timeout = 0 });
+
+            // IElementHandle googleButton = await page.QuerySelectorAsync("_3HhhB._2NolF._275sd._1ZefG._2Dar-");
             if (googleButton != null) {
                 await googleButton.ClickAsync();
             }
 
-            await page.RunAndWaitForNavigationAsync(() => {
-                return Task.CompletedTask;
-            }, new PageRunAndWaitForNavigationOptions { Timeout = 0 });
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new PageWaitForLoadStateOptions { Timeout = 0 });
 
             // Attempt at checking for incorrect passwords
             if (await page.QuerySelectorAsync("[data-test=\"invalid-form-field\"]") != null) {
