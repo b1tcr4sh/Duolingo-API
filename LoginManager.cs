@@ -89,7 +89,14 @@ namespace DuolingoAPI.Login
 
             await page.ClickAsync("button._1rl91._3HhhB._2NolF._275sd._1ZefG._2oW4v");
 
-            Thread.Sleep(TimeSpan.FromSeconds(5));
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+
+            IElementHandle googleButton = await page.QuerySelectorAsync("_3HhhB._2NolF._275sd._1ZefG._2Dar-");
+            if (googleButton != null) {
+                await googleButton.ClickAsync();
+            }
+            Thread.Sleep(TimeSpan.FromSeconds(15));
+
 
             // Attempt at checking for incorrect passwords
             if (await page.QuerySelectorAsync("[data-test=\"invalid-form-field\"]") != null) {
