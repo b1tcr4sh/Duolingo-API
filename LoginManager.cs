@@ -89,7 +89,7 @@ namespace DuolingoAPI.Login
 
             await page.ClickAsync("button._1rl91._3HhhB._2NolF._275sd._1ZefG._2oW4v");
 
-
+            Thread.Sleep(TimeSpan.FromSeconds(5));
 
             // Attempt at checking for incorrect passwords
             if (await page.QuerySelectorAsync("[data-test=\"invalid-form-field\"]") != null) {
@@ -98,8 +98,6 @@ namespace DuolingoAPI.Login
         }
         private async void FallBackWithGoogleLogin(object sender, IPage googlePopup)
         {
-            Thread.Sleep(TimeSpan.FromSeconds(3));
-
             Console.WriteLine("\"Continue With Google\" Popup appeared.  It appears the account was created with Google.");
 
 
