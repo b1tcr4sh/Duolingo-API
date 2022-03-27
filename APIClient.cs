@@ -17,7 +17,7 @@ namespace DuolingoAPI {
         }
         public APIClient() {}
 
-        public async Task LoginToDuolingo(CredentialPair loginCredentials, Func<IPage, Task> HandleIncorrectLogin) {
+        public async Task LoginToDuolingo(CredentialPair loginCredentials, Func<Task> HandleIncorrectLogin) {
             LoginManager loginManager = new LoginManager(HandleIncorrectLogin, loginCredentials);
 
             IPlaywright playwright = await Playwright.CreateAsync();

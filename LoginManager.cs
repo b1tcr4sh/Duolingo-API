@@ -24,7 +24,7 @@ namespace DuolingoAPI.Login
         }
 
 
-        public static CredentialPair CollectCredentials(Services service) {
+        public static CredentialPair CollectCredentials() {
             LoginCredentials duolingo = CollectServiceCredentials(Services.Duolingo);
             LoginCredentials google = CollectServiceCredentials(Services.Google);
 
