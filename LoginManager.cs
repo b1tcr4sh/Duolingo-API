@@ -95,8 +95,10 @@ namespace DuolingoAPI.Login
             if (googleButton != null) {
                 await googleButton.ClickAsync();
             }
-            Thread.Sleep(TimeSpan.FromSeconds(15));
 
+            await page.RunAndWaitForNavigationAsync(() => {
+                return Task.CompletedTask;
+            }, new PageRunAndWaitForNavigationOptions { Timeout = 0 });
 
             // Attempt at checking for incorrect passwords
             if (await page.QuerySelectorAsync("[data-test=\"invalid-form-field\"]") != null) {
