@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 using DuolingoAPI.Login;
@@ -21,10 +21,14 @@ namespace DuolingoAPI {
             LoginManager loginManager = new LoginManager(HandleIncorrectLogin, loginCredentials);
 
             IPlaywright playwright = await Playwright.CreateAsync();
-            browser = await playwright.Firefox.LaunchAsync(new BrowserTypeLaunchOptions {
-                Headless = Options.BrowserHeadless,
-                Timeout = Options.BrowserTimeout
-            });
+
+            BrowserTypeLaunchOptions browserOptions = new BrowserTypeLaunchOptions();
+            if (Options != null) {
+                browserOptions.Timeout = Options.BrowserTimeout;
+                browserOptions.Headless = Options.BrowserHeadless;
+            }
+
+            browser = await playwright.Firefox.LaunchAsync(browserOptions);
             
             IPage page = await browser.NewPageAsync();
             await page.GotoAsync("https://www.duolingo.com/?isLoggingIn=true", new PageGotoOptions { Timeout = 0 });
